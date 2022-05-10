@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useRef, useState, useMemo, useCallback} from 'react';
 import Hello from './Hello';
 import './App.css';
 import Wrapper from './Wrapper';
@@ -7,6 +7,10 @@ import InputSample from './InputSample';
 import UserList from './UserList';
 import CreateUser from './CreateUser';
 
+function countActiveUsers(users) {
+  console.log('활성 사용자 수를 세는 중...');
+  return users.filter(user =>  user.active).length;
+}
 
 function App() {
   const [inputs, setInputs] = useState({
@@ -14,13 +18,16 @@ function App() {
     email : ''
   });
   const {username, email} = inputs;
-  const onChange = e => {
+  const onChange = useCallback(
+    e => {
     const {name, value} = e.target;
     setInputs({
       ...inputs,
       [name]: value
     });
-  };
+  },
+  []
+  ); 
   const [users, setUsers] = useState([
     {
       id: 1,
@@ -43,12 +50,13 @@ function App() {
   ]);
 
   const nextId = useRef(4);
-  const onCreate = () => {
+  const onCreate = useCallback(() => {
     const user = {
       id : nextId.current,
       username,
       email
     };
+  
     //spread 연산자 사용
     // setUsers([...users, user]);
     setUsers([...users.concat(user)]);
@@ -58,21 +66,29 @@ function App() {
       email : ''
     });
     nextId.current += 1;
-  };
+  }, [username, email]);
 
-  const onRemove = id => {
+  const onRemove = useCallback (
+  id => {
     // user.id가 파라미터로 일치하지 않는 원소만 추출해서 새로운 배열을 만듬
     // = user.id 가 id 인것을 제거함
     setUsers(users.filter(user => user.id !== id));
-  };
+  }, [users]);
 
-  const onToggle = id => {
+  const onToggle = useCallback( 
+    id => {
     setUsers(
       users.map(user =>
+        // id값을 비교해서 다르다면 그대로 두고, 같다면 active 값을 반전시킨다.
         user.id === id ? {...user, active: !user.active} : user
         )
     );
-  };
+  }, 
+  []
+  );
+  
+
+  const count = useMemo(() => countActiveUsers(users), [users]);
 
   const name = 'react';
   const style = {
@@ -91,6 +107,7 @@ function App() {
         onCreate={onCreate}
         />
       <UserList users={users} onRemove={onRemove} onToggle={onToggle}/>
+      <div>활성사용자 수 : {count}</div>
       <InputSample />
       <Counter />
       {/* 주석은 화면에 보이지 않습니다 */}

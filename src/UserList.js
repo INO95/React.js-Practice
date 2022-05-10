@@ -1,4 +1,3 @@
-import { getDefaultNormalizer } from "@testing-library/react";
 import React, { useEffect } from "react";
 
 function User({user, onRemove, onToggle}){
@@ -67,4 +66,8 @@ function UserList ({users, onRemove, onToggle}){
     // );
 }
 
-export default UserList;
+export default React.memo(
+    UserList,
+    // 특정 값들만 비교하기
+    (prevProps, nextProps) => prevProps.users === nextProps.users
+    );
