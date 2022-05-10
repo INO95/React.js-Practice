@@ -5,6 +5,7 @@ function InputSample(){
         name: '',
         nickname:''
     });
+    const nameInput = null;
 
     //비구조화 할당을 통해 값 추출
     const {name, nickname} = inputs;
@@ -33,7 +34,7 @@ function InputSample(){
     return (
         <div>
             {/* <input onChange={onChange} value={text}/> */}
-            <input name="name" placeholder="이름" onChange={onChange} value={name}/>
+            <input name="name" placeholder="이름" onChange={onChange} value={name} ref={nameInput}/>
             <input name="nickname" placeholder="닉네임" onChange={onChange} value={nickname}/>
             <button onClick={onReset}>초기화</button>
             <div>
