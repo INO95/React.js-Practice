@@ -8,7 +8,7 @@ import UserList from './UserList';
 import CreateUser from './CreateUser';
 
 // 커밋 이슈로 한번 수정함
-// 커밋 이슈로 한번 수정함
+// 커밋 이슈로 한번 수정함2
 
 function countActiveUsers(users) {
   console.log('활성 사용자 수를 세는 중...');
