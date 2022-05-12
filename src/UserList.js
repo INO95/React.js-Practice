@@ -1,73 +1,45 @@
-import React, { useEffect } from "react";
+import React, { useContext } from 'react';
+import { UserDispatch } from './App';
 
-function User({user, onRemove, onToggle}){
-    useEffect( () => {
-        console.log(user);
+const User = React.memo(function User({ user }) {
+  //user 컴포넌트에서 바로 dispatch를 사용하기 위해 useContext라는 Hook을 사용해서 우리가 만든
+  // UserDispatch Context를 조회해야한다.
+  const dispatch = useContext(UserDispatch);
 
-        // console.log('user 값이 설정됨');
-        // console.log(user);
-        // // console.log('컴포넌트가 화면에 나타남');
-        // return  () => {
-        //     // console.log('컴포넌트가 화면에서 사라짐');
-        //         console.log('user 가 바뀌기 전..');
-        //         console.log(user);
-        // };
-    // }, [user]
-    });
-    return (
-        <div>
-            <b style={{
-                cursor: 'pointer',
-                color: user.active ? 'green' : 'black'
-            }}
-            onClick={() => onToggle(user.id)}
-            >
-                {user.username}
-            </b>
-            &nbsp;
-            <span>({user.email})</span>
-            <button onClick={() => onRemove(user.id)}>삭제</button>
-        </div>
-    );
+  return (
+    <div>
+      <b
+        style={{
+          cursor: 'pointer',
+          color: user.active ? 'green' : 'black'
+        }}
+        onClick={() => {
+          dispatch({ type: 'TOGGLE_USER', id: user.id });
+        }}
+      >
+        {user.username}
+      </b>
+      &nbsp;
+      <span>({user.email})</span>
+      <button
+        onClick={() => {
+          dispatch({ type: 'REMOVE_USER', id: user.id });
+        }}
+      >
+        삭제
+      </button>
+    </div>
+  );
+});
+
+function UserList({ users }) {
+  return (
+    <div>
+      {users.map(user => (
+        <User user={user} key={user.id} />
+      ))}
+    </div>
+  );
 }
 
-function UserList ({users, onRemove, onToggle}){
-    return(
-        <div>
-            {users.map(user => (
-                <User 
-                user={user} 
-                key={users.id} 
-                onRemove={onRemove}
-                onToggle={onToggle}
-                />
-            ))}
-        </div>
-    );
-    // return (
-    //     <div>
-    //         <User user={users[0]} />
-    //         <User user={users[1]} />
-    //         <User user={users[2]} />
-    //     </div>
-    // );
-    // return (
-    //     <div>
-    //         <div>
-    //             <b>{users[0].username}</b> <span>({users[0].email})</span>
-    //         </div>
-    //         <div>
-    //             <b>{users[1].username}</b> <span>({users[1].email})</span>
-    //         </div>
-    //         <div>
-    //             <b>{users[2].username}</b> <span>({users[2].email})</span>
-    //         </div>  
-    //     </div>
-    // );
-}
-
-export default React.memo(
-    UserList,
-    // 특정 값들만 비교하기
-    (prevProps, nextProps) => prevProps.users === nextProps.users
-    );
+export default React.memo(UserList);
